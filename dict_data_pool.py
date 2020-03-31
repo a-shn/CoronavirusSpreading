@@ -1,4 +1,5 @@
 import csv
+from collections import OrderedDict
 
 
 def get_countries_set():
@@ -47,13 +48,17 @@ def get_countries_confirmed_date_dict():
 			if w['Country/Region'] != '':
 				if w['Country/Region'] in countries_confirmed.keys():
 					if w['ObservationDate'] in countries_confirmed[w['Country/Region']].keys():
-						countries_confirmed[w['Country/Region']][w['ObservationDate']] = countries_confirmed[w['Country/Region']][w['ObservationDate']] + int(w['Confirmed'].split('.')[0])
+						countries_confirmed[w['Country/Region']][w['ObservationDate']] = \
+							countries_confirmed[w['Country/Region']][w['ObservationDate']] + int(
+								w['Confirmed'].split('.')[0])
 					else:
-						countries_confirmed[w['Country/Region']][w['ObservationDate']] = int(w['Confirmed'].split('.')[0])
+						countries_confirmed[w['Country/Region']][w['ObservationDate']] = int(
+							w['Confirmed'].split('.')[0])
 				else:
 					countries_confirmed[w['Country/Region']] = dict()
 					countries_confirmed[w['Country/Region']][w['ObservationDate']] = int(w['Confirmed'].split('.')[0])
 	return countries_confirmed
+
 
 def get_current_infected():
 	current_infected = dict()
@@ -64,12 +69,38 @@ def get_current_infected():
 				if w['Country/Region'] in current_infected.keys():
 					if w['ObservationDate'] in current_infected[w['Country/Region']].keys():
 						current_infected[w['Country/Region']][w['ObservationDate']] = \
-						current_infected[w['Country/Region']][w['ObservationDate']] + int(
-							w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
+							current_infected[w['Country/Region']][w['ObservationDate']] + int(
+								w['Confirmed'].split('.')[0]) - (
+									int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
 					else:
 						current_infected[w['Country/Region']][w['ObservationDate']] = int(
-							w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
+							w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(
+							w['Deaths'].split('.')[0]))
 				else:
 					current_infected[w['Country/Region']] = dict()
-					current_infected[w['Country/Region']][w['ObservationDate']] = int(w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
+					current_infected[w['Country/Region']][w['ObservationDate']] = int(w['Confirmed'].split('.')[0]) - (
+							int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
 	return current_infected
+
+
+def get_infected_per_day():
+	countries_and_confirmed = get_countries_confirmed_date_dict()
+	infected_per_day = dict()
+	for country in countries_and_confirmed.keys():
+		try:
+			countries_and_confirmed_list = sorted(countries_and_confirmed[country].items())
+			for i in range(len(countries_and_confirmed_list) - 1):
+				if country in infected_per_day.keys():
+					infected_per_day[country][countries_and_confirmed_list[i][0]] = countries_and_confirmed_list[i + 1][1] - \
+					                                                       countries_and_confirmed_list[i][1]
+				else:
+					infected_per_day[country] = dict()
+					infected_per_day[country][countries_and_confirmed_list[i][0]] = countries_and_confirmed_list[i + 1][1] - \
+					                                                       countries_and_confirmed_list[i][1]
+
+			infected_per_day[country] = OrderedDict(infected_per_day[country])
+		except KeyError:
+			continue
+	return infected_per_day
+
+

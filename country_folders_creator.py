@@ -1,7 +1,7 @@
 import csv
 import os
-import tools
+import dict_data_pool
 
 
-for c in tools.get_countries_and_provinces_dict().keys():
+for c in dict_data_pool.get_countries_and_provinces_dict().keys():
 	os.mkdir('pics/' + c)
