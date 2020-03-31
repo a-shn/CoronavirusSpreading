@@ -1,4 +1,12 @@
 def get_smoothed_with_mean_of_days(data_dict, days):
+	"""
+	Smooths data like mean of values for days period
+	Args:
+		data_dict (dict): {$country: {$date: value}}
+		days (int)
+	Returns:
+		dict
+	"""
 	smoothed_dict = dict()
 	for country in data_dict.keys():
 		tmp_list = sorted(data_dict[country].items())

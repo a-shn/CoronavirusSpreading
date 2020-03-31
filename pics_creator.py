@@ -33,7 +33,7 @@ def get_pics_with_extremas(dict_with_date_dicts, extremas, folder):
 		ax.plot(list(dict_with_date_dicts[country].keys()), list(dict_with_date_dicts[country].values()))
 		ax.set(xlabel='date', ylabel='confirmed')
 		for extrema in extremas[country]:
-			ax.axvline(x=extrema, linewidth=1, color='r')
+			ax.axvline(x=extrema, linewidth=0.7, color='r', linestyle='--')
 		for tick in ax.get_xticklabels():
 			tick.set_rotation(45)
 		ax.grid()
