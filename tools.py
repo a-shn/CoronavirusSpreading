@@ -54,3 +54,22 @@ def get_countries_confirmed_date_dict():
 					countries_confirmed[w['Country/Region']] = dict()
 					countries_confirmed[w['Country/Region']][w['ObservationDate']] = int(w['Confirmed'].split('.')[0])
 	return countries_confirmed
+
+def get_current_infected():
+	current_infected = dict()
+	with open('data/covid_19_data.csv', newline='') as csvfile:
+		timereader = csv.DictReader(csvfile)
+		for w in timereader:
+			if w['Country/Region'] != '':
+				if w['Country/Region'] in current_infected.keys():
+					if w['ObservationDate'] in current_infected[w['Country/Region']].keys():
+						current_infected[w['Country/Region']][w['ObservationDate']] = \
+						current_infected[w['Country/Region']][w['ObservationDate']] + int(
+							w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
+					else:
+						current_infected[w['Country/Region']][w['ObservationDate']] = int(
+							w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
+				else:
+					current_infected[w['Country/Region']] = dict()
+					current_infected[w['Country/Region']][w['ObservationDate']] = int(w['Confirmed'].split('.')[0]) - (int(w['Recovered'].split('.')[0]) + int(w['Deaths'].split('.')[0]))
+	return current_infected
